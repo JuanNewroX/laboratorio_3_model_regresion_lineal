@@ -1,0 +1,41 @@
+---
+title: "Ejercicio_3"
+author: "JuanRomero"
+date: "29/5/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+### Analisis modelo 1
+```{r analisis_modelo_1, echo=FALSE, results='asis'}
+
+cat("#### En el primer modelo se esta realizando una regresion lineal con una sola variable, podemos identificar varias cosas que nos indican que este modelo no es tan bueno. </br> Primero: El T value, nos da valores muy bajos que estan dentro den rango 2.5 y -2.5 para que el modelo sea bueno deberia estar alejado de este rango. </br> Segundo: El R cuadrado, nos da aproximadamente 0.1531 lo cual es un valor muy bajo lo que nos dice que estas variables son son significativas para implemetaer un modelo. </br> Tercero: Nos damos cuenta que el B0 no es tan importante que este en el modelo ya que no tiene ninguna *"
+)
+
+```
+
+
+### Analisis modelo 2
+```{r analisis_modelo_2, echo=FALSE, results='asis'}
+
+cat("#### En este segundo modelo observamos que se esta realizando una regresion lineal con  tres  variables, al trabajar con multiples variables vemos que se mejor el T Value de la variables UNEM que en el primer modelo estuvo por debajo de los valores aceptables ha mejorado y posiblemente sea aceptable. </br> Primero: El T value, para las tres variables es bueno sin embargo la variable UNEM todavia esta un poco bajo. </br> Segundo: El R cuadrado, nos da  0.9621 lo cual lo cual es un indicar que el modelo esta sobre estimado/ajustado.</br> Tercero: Vemos que las * nos indica que es importante que todos los B esten en este modelo </br> Cuarto: El estadistico F nos indica que el modelo es bueno para hacer prediccion, apesar de que el R2 esta alto quizas si se abueno probar el modelo para prediccion."
+)
+
+```
+
+### Analisis modelo 3
+```{r analisis_modelo_3, echo=FALSE, results='asis'}
+
+cat("#### El tercer modelo  observamos que se esta realizando una regresion lineal con un set de datos de entrenamiento, en una regresion lineal univariable</br> Primero: El T value, es excelente para los B  </br> Segundo: El R cuadrado, nos da  0.95 lo cual lo cual nos indica que posiblemente este sobre ajustado el modelo, si colocamos un valor fuera de los rangos aceptables no podriamos hacer una buena estimacion </br> Tercero: Las * nos indica que los B son importantes para este modelo </br> Cuarto: El estadistico F nos indica que el modelo es bueno para hacer prediccion"
+)
+
+```
+
+
+
+
+

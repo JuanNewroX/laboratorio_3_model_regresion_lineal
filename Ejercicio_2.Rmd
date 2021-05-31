@@ -1,0 +1,182 @@
+---
+title: "Ejercicio_2"
+author: "JuanRomero"
+date: "28/5/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+library(knitr)
+library(kableExtra)
+library(corrplot)
+```
+
+### Realice un análisis estadístico sobre todas las variables del dataset
+
+```{r analisis_estadisto}
+
+df_data <- read.csv("Admission_Predict.csv")
+df_data %>% summary() %>% kable() %>% kable_styling(latex_options = "scale_down")
+
+```
+### gráfica de densidad para cada una de las variables numéricas en el dataset: GRE.Score, TOEFEL.Score, CGPA y Chance of Admit
+
+```{r Grafica densidad}
+
+df_data %>% colnames()
+
+
+df_data %>% 
+  ggplot(aes(x = c(GRE.Score), y = ..density..))+
+  geom_density(fill="cyan") + theme_minimal() + ggtitle("GRE.Score") + xlab("GRE.Score") + ylab("Densidad")
+
+df_data %>% 
+  ggplot(aes(x = c(TOEFL.Score), y = ..density..))+
+  geom_density(fill="magenta") + theme_minimal() + ggtitle("TOEFL.Score") + xlab("TOEFL.Score") + ylab("Densidad")
+
+
+df_data %>% 
+  ggplot(aes(x = c(CGPA), y = ..density..))+
+  geom_density(fill="green") + theme_minimal() + ggtitle("CGPA") + xlab("CGPA") + ylab("Densidad")
+
+
+df_data %>% 
+  ggplot(aes(x = c(Chance.of.Admit), y = ..density..))+
+  geom_density(fill="orange") + theme_minimal() + ggtitle("Chance.of.Admit") + xlab("Chance.of.Admit") + ylab("Densidad")
+
+
+```
+
+
+### gráfica de correlación entre las variables del inciso anterior.
+
+```{r grafica de correlacion}
+
+
+df_data %>% ggplot(aes(x = GRE.Score, y = TOEFL.Score)) +
+  geom_point(color = "blue")  + theme_minimal() + ggtitle("Correlacion GRE.Score vs TOEFL.Score") + xlab("GRE.Score") + ylab("TOEFL.Score")
+
+df_data %>% ggplot(aes(x = GRE.Score, y = CGPA)) +
+  geom_point(color = "blue")  + theme_minimal() + ggtitle("Correlacion GRE.Score vs CGPA") + xlab("GRE.Score") + ylab("CGPA")
+
+df_data %>% ggplot(aes(x = GRE.Score, y = Chance.of.Admit)) +
+  geom_point(color = "blue")  + theme_minimal() + ggtitle("Correlacion GRE.Score vs Chance.of.Admit") + xlab("GRE.Score") + ylab("Chance.of.Admit")
+
+df_data %>% ggplot(aes(x = TOEFL.Score, y = CGPA)) +
+  geom_point(color = "green")  + theme_minimal() + ggtitle("Correlacion TOEFL.Score vs CGPA") + xlab("TOEFL.Score") + ylab("CGPA")
+
+df_data %>% ggplot(aes(x = TOEFL.Score, y = Chance.of.Admit)) +
+  geom_point(color = "orange")  + theme_minimal() + ggtitle("Correlacion TOEFL.Score vs Chance.of.Admit") + xlab("TOEFL.Score") + ylab("Chance.of.Admit")
+
+df_data %>% ggplot(aes(x = CGPA, y = Chance.of.Admit)) +
+  geom_point(color = "red")  + theme_minimal() + ggtitle("Correlacion CGPA vs Chance.of.Admit") + xlab("CGPA") + ylab("Chance.of.Admit")
+
+df_data %>% select(GRE.Score, TOEFL.Score, CGPA, Chance.of.Admit) %>% cor()
+
+df_data %>% select(GRE.Score, TOEFL.Score, CGPA, Chance.of.Admit) %>% cor() %>% corrplot(method = "number", type = "upper")
+
+```
+
+### Comentarios sobre el analisis estadistico
+
+```{r comentrarios, echo = FALSE, results="markup" }
+
+cat("Comentarios Grafica 1. GRE.Score vs TOEFL.Score, se puede observar que si hay una correlacion lineal entre estas variables sin embargo hay aproximadamente 20 puntos con valores fuera de conglomerado de puntos, la calificacion que le asigno a esta grafica de 1 a 10 es 6")
+
+
+cat("Comentarios Grafica 2. GRE.Score vs CGPA, es una grafica mucho mas compacta  sus valores en el eje Y oscilan entre 6 y 10, la calificacion que le asigno a esta grafica de 1 a 10 es 7.5")
+
+cat("Comentarios Grafica 3. GRE.Score vs Chance.of.Admin, esta grafica tambien tiene una correlacion lineal con valores en y enre 0.3 y 1.0 existen valores fuera del conglomerado principal de puntos, la calificacion que le asigno a esta grafica de 1 a 10 es 6")
+
+cat("Comentarios Grafica 4. CGPA vs CTOEFL.Score, la calificacion que le asigno a esta grafica de 1 a 10 es 7, en el centro presenta muchos puntos dispersos pero en las esquinas su juntan los valores")
+
+cat("Comentarios Grafica 5. CGPA  vs Chance.of.Admit, considero que es la mejor grafica  de pude ver bastante la correlacion entre estas dos variables si tuviera que escoger estan serian la variables que mas tiene correlacion.")
+
+```
+
+### scatter plot de todas las variables numéricas contra la variable Chance of Admit.
+
+```{r scatter}
+
+df_data %>% ggplot(aes(x = GRE.Score, y = Chance.of.Admit)) +
+  geom_point(color = "magenta")  + theme_minimal() + ggtitle("scatter GRE.Score vs Chance.of.Admit") + xlab("GRE.Score") + ylab("Chance.of.Admit")
+
+
+df_data %>% ggplot(aes(x = TOEFL.Score, y = Chance.of.Admit)) +
+  geom_point(color = "magenta")  + theme_minimal() + ggtitle("scatter TOEFL.Score vs Chance.of.Admit") + xlab("TOEFL.Score") + ylab("Chance.of.Admit")
+
+
+df_data %>% ggplot(aes(x = CGPA, y = Chance.of.Admit)) +
+  geom_point(color = "magenta")  + theme_minimal() + ggtitle("scatter CGPA vs Chance.of.Admit") + xlab("CGPA") + ylab("Chance.of.Admit")
+
+
+
+
+
+```
+
+
+### modelo de regresión lineal simple con cada variable numérica como X y la variable Chance of Admit como Y
+
+```{r modelos}
+
+
+lm1 <- df_data %>% lm(
+  formula = Chance.of.Admit ~ GRE.Score
+)
+summary(lm1)
+
+lm2 <- df_data %>% lm(
+  formula = Chance.of.Admit  ~ TOEFL.Score
+)
+summary(lm2)
+
+lm3 <- df_data %>% lm(
+  formula =  Chance.of.Admit ~ CGPA
+)
+summary(lm3)
+
+
+```
+### Gráfica de cada modelo de regresión lineal en su scatter plot correspondiente.
+```{r Graficas modelos}
+
+
+df_data %>% ggplot(aes(x = GRE.Score, y = Chance.of.Admit)) +
+  geom_point(color = "blue")  + stat_smooth(method = "lm", col = "red") + theme_minimal() + ggtitle("lm - GRE.Score vs Chance.of.Admit") + xlab("GRE.Score") + ylab("Chance.of.Admit")
+
+
+df_data %>% ggplot(aes(x = TOEFL.Score, y = Chance.of.Admit)) +
+  geom_point(color = "green")    + stat_smooth(method = "lm", col = "red") + theme_minimal() + ggtitle("lm - TOEFL.Score vs Chance.of.Admit") + xlab("TOEFL.Score") + ylab("Chance.of.Admit")
+
+
+df_data %>% ggplot(aes(x = CGPA, y = Chance.of.Admit)) +
+  geom_point(color = "yellow")   + stat_smooth(method = "lm", col = "red") +  theme_minimal() + ggtitle("lm - CGPA vs Chance.of.Admit") + xlab("CGPA") + ylab("Chance.of.Admit")
+
+
+
+
+```
+
+
+### Análisis sobre los resultados de cada modelo y diga cual de estos considera que es mejor y por que.
+
+
+```{r analisis, echo=FALSE, results='markup'}
+
+cat("Std. Error, El erro mas alto esta representado en el modulo no. 1 entre las variables GRE.Scor y Chance.of.Admit, y el mas bajo es el modelo numero 3 entre las varibales CGPA y  Chance.of.Admit")
+
+cat("t value, todas los modelos tienen un t value mayor que el rango -2.5 y 2.5 lo que nos indica que podriamos usar cualquiera de los 3, sin embargo notamos que los valores mas altos se encuentra en el tercer modelo entre las variables CGPA y  Chance.of.Admit")
+
+cat("R2, el R2 mas alto nos los da el modelo numero 3, con un valor de .7787")
+
+cat("Por las razones anteriormente explicadas y desde el inicio cuando vimos las graficas de correlacion podemos concluir que el mejor modelo se aplica entre las variables CGPA y  Chance.of.Admit")
+
+
+
+```
+

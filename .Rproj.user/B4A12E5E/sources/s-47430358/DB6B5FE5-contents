@@ -1,0 +1,258 @@
+---
+title: "Analisis"
+author: "JuanRomero"
+date: "11/5/2021"
+output:
+  html_document: default
+  pdf_document: default
+  word_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+if (!require("knitr")) install.packages("knitr")
+if (!require("kableExtra")) install.packages("kableExtra")
+
+library(knitr)
+library(kableExtra)
+
+library(ggplot2)
+```
+
+
+
+```{r carga_datos}
+
+datos <- read.csv(file = "hour.csv")
+
+datos %>% glimpse()
+
+```
+
+# 1. ¿Qué mes es el que tiene la mayor demanda?
+
+```{r pregunta_1, echo=FALSE}
+
+datos <- datos %>% mutate(
+  yr = substr(dteday, 0 , 4)
+) 
+
+datos %>% group_by(mnth, yr) %>% mutate(
+  cantidad = sum(cnt)
+) %>% ungroup() %>%  group_by(yr) %>% mutate(
+  demanda =  max(cantidad)
+)  %>% filter(demanda == cantidad) %>% select(yr, mnth, demanda) %>% unique() %>%  kable(caption = "Mes con mas demanda en cada anho") %>% kable_styling(bootstrap_options = "striped", full_width = F) %>% row_spec(1:2, bold = T, color = "white", background = "#D7261E")
+
+
+datos %>% group_by(mnth) %>% mutate(
+  cantidad = sum(cnt)
+) %>% ungroup() %>% mutate(
+  demanda =  max(cantidad)
+)  %>% filter(demanda == cantidad) %>% select("Mes" = mnth,  "Total demanda " = demanda) %>% unique() %>%  kable(caption = "Mes con mas demanda general") %>% kable_styling(bootstrap_options = "striped", full_width = F) %>% row_spec(1:1, bold = T, color = "white", background = "#D7261E")
+
+
+```
+
+
+# 2. ¿Qué rango de hora es la de mayor demanda?
+
+```{r pregunta_2, echo=FALSE}
+
+datos %>% group_by(hr) %>% mutate(
+  cantidad = sum(cnt)
+) %>% ungroup() %>% mutate(
+  demanda =  max(cantidad)
+)  %>% filter(demanda == cantidad) %>% select("Hora (HH)" = hr, "Demanda total" = demanda) %>% unique() %>%  kable(caption = "Hora con mas demanda general") %>% kable_styling(bootstrap_options = "striped", full_width = F) %>% row_spec(1:1, bold = T, color = "white", background = "#D7261E")
+
+```
+
+# 3. ¿Qué temporada es la mas alta?
+
+
+```{r pregunta_3, echo=FALSE}
+
+datos %>% group_by(season) %>% mutate(
+  cantidad = sum(cnt)
+) %>% ungroup() %>% mutate(
+  demanda =  max(cantidad)
+)  %>% filter(demanda == cantidad) %>%  
+  mutate(season = recode(
+    season, 
+    "1" = "Spring",
+    "2" = "Summer",
+    "3" = "Fall",
+    "4" = "Winter")
+  ) %>% select("Temporada" = season, "Demanda total" = demanda) %>% unique() %>%  kable(caption = "Temporada con mas demanda general") %>% kable_styling(bootstrap_options = "striped", full_width = F) %>% row_spec(1:1, bold = T, color = "white", background = "#D7261E")
+
+
+```
+
+# 4. ¿A que temperatura baja la demanda?
+
+
+```{r pregunta_4, echo=FALSE}
+
+
+datos %>% group_by(temp) %>% mutate(
+   cantidad = sum(cnt)
+) %>% ungroup() %>% select("Temperatura" = temp, "Demanda" = cantidad) %>% unique() %>% arrange(Temperatura) %>% ggplot(aes(Temperatura, Demanda)) + geom_line() + theme_minimal()
+
+
+datos %>% group_by(temp) %>% mutate(
+  cantidad = sum(cnt)
+) %>% ungroup() %>% mutate(
+  demanda =  min(cantidad)
+)  %>% filter(demanda == cantidad) %>%  select("Temperatura" = temp, "Demanda" = demanda) %>% unique() %>%   kable(caption = "Temperatura donde hay menos demanda") %>% kable_styling(bootstrap_options = "striped", full_width = F) %>% row_spec(1, bold = T, color = "white", background = "#D7261E")
+
+
+```
+
+
+# 5. ¿A que humedad baja la demanda?
+
+```{r pregunta_5, echo=FALSE}
+
+datos %>% group_by(hum) %>% mutate(
+   cantidad = sum(cnt)
+) %>% ungroup() %>% select("Humedad" = hum, "Demanda" = cantidad) %>% unique() %>% arrange(Humedad) %>% ggplot(aes(Humedad, Demanda)) + geom_line() + theme_minimal()
+
+
+datos %>% group_by(hum) %>% mutate(
+  cantidad = sum(cnt)
+) %>% ungroup() %>% mutate(
+  demanda =  min(cantidad)
+)  %>% filter(demanda == cantidad) %>%  select("Humedad" = hum,  "Demanda" = demanda) %>% unique() %>%   kable(caption = "Humedad donde hay menos demanda") %>% kable_styling(bootstrap_options = "striped", full_width = F) %>% row_spec(1, bold = T, color = "white", background = "#D7261E")
+
+
+
+```
+
+# 6. ¿Que condiciones climáticas serian ideales para nuestra demanda? (considere una función de densidad bivariable)
+
+```{r pregunta_6, echo=FALSE}
+
+
+datos %>% ggplot() + geom_density(aes(x=temp, group=weathersit, fill=cnt),alpha=0.5, adjust=2) + theme_minimal() 
+
+```
+
+# 7. Mueste una gráfica de la densidad de rentas.
+
+```{r pregunta_7, echo=FALSE}
+
+datos %>% 
+  ggplot(aes(x = c(cnt), y = ..density..))+
+  geom_density() + theme_minimal() + ggtitle("Rentas") + xlab("Rentas") + ylab("Densidad")
+
+
+```
+
+# 8. Determine promedio de personas que rentan bicicletas y están registradas.
+
+
+```{r pregunta_8, echo=FALSE}
+
+datos %>% transmute(
+  promedio_personas = mean(registered)
+) %>% unique() %>%  kable(caption = "Promedio de renta por hora de personas registradas") %>% kable_styling(bootstrap_options = "striped", full_width = F) %>% row_spec(1, bold = T, color = "white", background = "#D7261E")
+
+
+```
+
+9. Determine la mediana de personas que rentan bicicletas y no están registradas.
+
+```{r pregunta_9, echo=FALSE}
+
+datos %>% transmute(
+  media_personas = median(casual) 
+) %>% unique() %>%  kable(caption = "Media de renta por hora de personas no registradas") %>% kable_styling(bootstrap_options = "striped", full_width = F) %>% row_spec(1, bold = T, color = "white", background = "#D7261E")
+
+
+```
+
+# 10. Deterimne la renta total, renta promedio por cada tipo de condición climática.
+```{r pregunta_10, echo=FALSE}
+
+datos %>% mutate(
+  weathersit = recode(
+      weathersit,
+      "1" = "Clear, Few clouds, Partly cloudy, Partly cloudy",
+      "2" = "Mist + Cloudy, Mist + Broken clouds, Mist + Few clouds, Mist ",
+      "3" = "Light Snow, Light Rain + Thunderstorm + Scattered clouds, Light Rain + Scattered clouds",
+      "4" = "Heavy Rain + Ice Pallets + Thunderstorm + Mist, Snow + Fog"
+  )
+) %>% group_by(weathersit) %>% transmute(
+  renta_total = sum(cnt),
+  renta_promedio = mean(cnt)
+) %>% unique() %>%  kable(caption = "Renta total, promedio clima") %>% kable_styling(bootstrap_options = "striped", full_width = F) %>% row_spec(1:4, bold = T, color = "white", background = "#D7261E")
+
+
+```
+
+# 11. Determine y muestre una gráfica de barras de cada renta por tipo de temporada.
+```{r pregunta_11, echo=FALSE}
+ 
+datos %>% mutate(season = recode(
+    season, 
+    "1" = "Spring",
+    "2" = "Summer",
+    "3" = "Fall",
+    "4" = "Winter")
+) %>% group_by(season) %>% transmute(
+   total_rentas = sum(cnt)
+) %>% unique() %>% ggplot(aes(x = season, y = total_rentas, fill=season)) + geom_bar(position = 'dodge', stat='identity') + ylab("Rentas") + theme_minimal()
+
+
+
+```
+
+
+# 12. Muestre una gráfica de la densidad por hora. 
+
+```{r pregunta_12, echo=FALSE}
+
+datos %>% 
+  ggplot(aes(x = c(hr), y = ..density..))+
+  geom_density() + theme_minimal()
+
+```
+
+# 13. Muestre una gráfica de barras por día del mes como eje x y la cantidad total de alquileres como el eje Y.
+
+```{r pregunta_13, echo=FALSE}
+
+datos %>% mutate( day_month = substr(dteday, 9 , 10) ) %>% group_by(day_month) %>% transmute(
+   total_rentas = sum(cnt)
+) %>% unique() %>% ggplot(aes(x = day_month, y = total_rentas, fill=day_month)) + geom_bar(position = 'dodge', stat='identity') + ylab("Rentas") + xlab("Dia del mes") + theme_minimal()
+
+
+```
+
+
+# 14. Muestre una serie temporal (gráfica) con el tiempo (mes-dia-año) como eje de tiempo y la cantidad de alquieleres como ejer Y.
+
+```{r pregunta_14, echo=FALSE}
+
+datos %>% mutate(
+  fecha = as.Date(dteday)
+) %>% group_by(fecha) %>% transmute(
+  alquiler = sum(cnt)
+) %>% arrange(fecha) %>% ggplot(aes(x = fecha, y = alquiler)) + geom_line() + xlab("Tiempo") + ylab("Alquieleres") + theme_minimal() 
+
+
+```
+
+
+# 15. Muestre una gráfica de puntos que relaciones la temperatura como ejer X y la humedad como eje Y.
+
+```{r pregunta_15, echo=FALSE}
+
+datos %>% ggplot(
+  aes(x=temp, y = hum)
+) + geom_point()
+
+
+```
+
+

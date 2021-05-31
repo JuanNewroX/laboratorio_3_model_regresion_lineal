@@ -1,0 +1,136 @@
+---
+title: "Ejecicio_1"
+author: "JuanRomero"
+date: "28/5/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+library(knitr)
+library(kableExtra)
+
+```
+
+### Funcion para calcular todos los parametros de la regresion  lineal 
+
+```{r funcion}
+
+calcular_datos <- function(df){
+  if( ncol(df) == 2 ) {
+    
+      colnames(df) = c("X", "Y")
+      df_calculos <- df %>% mutate(
+        X2 = X * X, 
+        Y2 = Y * Y,
+        XY = X * Y
+      ) %>% mutate(
+          n = n(),
+          sum_X =  sum(X),
+          sum_Y =  sum(Y),
+          sum_X2 = sum(X2),
+          sum_Y2 = sum(Y2),
+          sum_XY = sum(XY)
+      ) %>%  mutate(
+          B1 = ((n * sum_XY) - (sum_X * sum_Y)) / ((n * sum_X2 ) - (sum_X*sum_X)),
+          B0 = (sum_Y - (B1 * sum_X)) / n
+      ) %>% mutate(
+         mean_X = mean(X),
+         mean_Y = mean(Y)
+      ) %>% mutate(
+         sum_x_mean_x = X - mean_X,
+         sum_y_mean_y = Y - mean_Y,
+         sum_x_mean_x_2 =  sum_x_mean_x * sum_x_mean_x,
+         sum_y_mean_y_2 =  sum_y_mean_y * sum_y_mean_y,
+         sum_xy_mean_xy = sum_x_mean_x *  sum_y_mean_y
+      ) %>% mutate(
+         total_sum_x_mean_x_2 = sum(sum_x_mean_x_2),
+         total_sum_y_mean_y_2 = sum(sum_y_mean_y_2),
+         total_sum_xy_mean_xy = sum(sum_xy_mean_xy)
+      ) %>% mutate(
+         r = total_sum_xy_mean_xy / (sqrt(total_sum_x_mean_x_2) * sqrt(total_sum_y_mean_y_2)) 
+      ) %>% mutate(
+         datos_y = B0 + B1 * X
+      ) %>% mutate(
+         error = Y - datos_y,
+         error_cuadrado = error * error
+      ) %>% mutate(
+         sum_error_cuadrado  =  sum(error_cuadrado),
+         r2 = 1 - ( sum_error_cuadrado / total_sum_y_mean_y_2 )
+      ) 
+      
+      df_calculos
+      
+  }
+}
+
+```
+
+### Funcion para realizar la grafica
+
+```{r funcion_grafica}
+
+graficar <- function(df){
+  df %>% ggplot( aes(x = X, y = Y) ) + geom_point( color='darkblue' ) + geom_line( aes(X, datos_y ), color='red') + 
+    ggtitle( paste("Regresion lineal manual", "y =", round(max(df$B1), 3)  ," * X + ",  round(max(df$B0), 3) , ", r =" , round(df$r, 3), ", R2 =" , round(max(df$r2), 3) ) )
+    
+    
+  #annotate("text", x = max(df$X)  , y = max(df$Y) + 1, label = )+  
+  #annotate("text", x = median(df$X) , y = max(df$Y) + 1, label = paste0("R", max(df$r))) 
+  
+}
+
+
+```
+## Prueba de la funcion data frame establecido 
+
+```{r Probar funcion ejemplo 1}
+
+df = data.frame(
+   c(100,90,80,45,50,50,60,40,25,20),
+   c(3,5,9,10,20,21,24,24,27,35)
+)
+
+
+datos <- calcular_datos(df)
+
+cat("### Parametros calculados")
+
+datos %>% select(B0, B1, r, r2) %>% unique() %>%  kable() 
+
+graficar(datos)
+
+
+
+
+```
+
+### Prueba de la funcion con un rango aleatorio
+
+```{r probar funcion ejemplo 2}
+
+set.seed("28052021")
+df = data.frame(matrix(rnorm(20), nrow=10))
+
+
+datos <- calcular_datos(df)
+
+cat("### Parametros calculados")
+
+datos %>% select(B0, B1, r, r2) %>% unique() %>%  kable() 
+
+graficar(datos)
+
+
+```
+
+
+
+
+
+
+
