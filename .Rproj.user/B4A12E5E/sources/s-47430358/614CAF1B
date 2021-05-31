@@ -1,20 +1,19 @@
 {
     "collab_server" : "",
     "contents" : "",
-    "created" : 1622423947585.000,
+    "created" : 1622428075840.000,
     "dirty" : false,
     "encoding" : "UTF-8",
     "folds" : "",
     "hash" : "0",
-    "id" : "1B17D181",
+    "id" : "614CAF1B",
     "lastKnownWriteTime" : 1622427685,
-    "last_content_update" : 1622427685770,
-    "path" : "C:/Users/CES-UVG/workspace svn-R/Lab_3_Econometria/Ejericio_3.Rmd",
-    "project_path" : "Ejericio_3.Rmd",
+    "last_content_update" : 1622427685,
+    "path" : "C:/Users/CES-UVG/workspace svn-R/Lab_3_Econometria/Ejercicio_3.Rmd",
+    "project_path" : "Ejercicio_3.Rmd",
     "properties" : {
-        "cursorPosition" : "24,809",
-        "scrollLine" : "14",
-        "tempName" : "Untitled1"
+        "cursorPosition" : "5,3",
+        "scrollLine" : "0"
     },
     "read_only" : false,
     "read_only_alternatives" : [
